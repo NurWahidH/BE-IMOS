@@ -14,11 +14,20 @@ class Aset extends Model
         'kode_barcode',
         'kondisi',
         'lokasi_saat_ini_id',
-        'nama_aset',
         'nilai_residu',
         'pic_saat_ini_id',
         'tanggal_pembelian',
         'umur_ekonomis_tahun',
         'harga_beli'
     ];
+
+    public function kategori()
+    {
+        return $this->belongsTo(KategoriAset::class, 'kategori_id');
+    }
+
+    public function lokasi()
+    {
+        return $this->belongsTo(Lokasi::class, 'lokasi_saat_ini_id');
+    }
 }

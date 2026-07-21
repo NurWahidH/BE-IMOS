@@ -1,14 +1,46 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AsetController;
-use App\Http\Controllers\LokasiController;
-use App\Http\Controllers\KategoriAsetController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AssetController;
 
-Route::get('/aset', [AsetController::class, 'index']);
-Route::post('/aset', [AsetController::class, 'store']);
+// ----------------------------------------------------
+// 1. Rute Publik (Bisa diakses tanpa login)
+// ----------------------------------------------------
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::get('/assets/scan/{qr_code}', [AssetController::class, 'scan']); // Public User scan QR
 
-Route::get('/lokasi', [LokasiController::class, 'index']);
-Route::post('/lokasi', [LokasiController::class, 'store']);
 
-Route::resource('kategoriaset', KategoriAsetController::class);
+// ----------------------------------------------------
+// 2. Rute Wajib Login
+// ----------------------------------------------------
+Route::middleware('auth:api')->group(function () { // Pakai auth:api jika JWT, atau auth:sanctum
+
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/profile', [AuthController::class, 'profile']);
+
+    // --- GRUP MASTER ADMIN ---
+    Route::middleware('role:master_admin')->group(function () {
+        Route::get('/users', [UserController::class, 'index']);
+        Route::post('/users', [UserController::class, 'store']);
+        Route::put('/users/{id}', [UserController::class, 'update']);
+        Route::delete('/users/{id}', [UserController::class, 'destroy']);
+    });
+
+    // --- GRUP ADMIN ---
+    Route::middleware('role:admin')->group(function () {
+        Route::post('/assets', [AssetController::class, 'store']);
+        Route::post('/assets/upload', [AssetController::class, 'upload']);
+        Route::put('/assets/{id}', [AssetController::class, 'update']);
+
+    });
+
+    // --- GRUP USER & PUBLIC (Yang sudah login) ---
+    Route::middleware('role:user,public')->group(function () {
+        Route::post('/mutations', [MutationController::class, 'store']); // Pengajuan mutasi
+        Route::post('/complaints', [ComplaintController::class, 'store']); // Pengajuan laporan
+    });
+
+});

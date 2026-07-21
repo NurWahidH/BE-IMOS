@@ -10,9 +10,8 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            // Relasi ke tabel role sesuai ERD IMOS
             $table->foreignId('role_id')->nullable()->constrained('role')->onDelete('set null');
-            $table->string('username', 100);
+            $table->string('username', 100)->unique();
             $table->string('email', 150)->unique();
             $table->string('password', 255);
             $table->timestamps();
