@@ -41,6 +41,14 @@ class User extends Authenticatable implements PasskeyUser, JWTSubject
     use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
 
     /**
+     * Get the role associated with the user.
+     */
+    public function role(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
