@@ -40,6 +40,15 @@ class AuthController extends Controller
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
+        if (Auth::guard('api')->user()?->status === 'Non-Aktif') {
+            Auth::guard('api')->logout();
+
+            return response()->json([
+                'error' => 'Account inactive',
+                'message' => 'Akun Anda sedang nonaktif.'
+            ], 403);
+        }
+
         return $this->respondWithToken($token);
     }
 

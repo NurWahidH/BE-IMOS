@@ -26,7 +26,7 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['username', 'email', 'password', 'role_id'])]
+#[Fillable(['username', 'email', 'password', 'role_id', 'status'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser, JWTSubject
 {
@@ -35,6 +35,7 @@ class User extends Authenticatable implements PasskeyUser, JWTSubject
         'email',
         'password',
         'role_id',
+        'status',
     ];
 
     /** @use HasFactory<UserFactory> */

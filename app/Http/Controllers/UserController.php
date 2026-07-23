@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UsersChanged;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -11,7 +12,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        $users = User::with('role')->get();
         return response()->json([
             'status' => 'success',
             'data' => $users
@@ -24,15 +25,19 @@ class UserController extends Controller
             'username' => 'required|string|unique:users',
             'email' => 'required|email|unique:users',
             'password' => ['required', 'string', Password::min(8)->mixedCase()->numbers()],
-            'role_id' => 'nullable|integer|exists:role,id'
+            'role_id' => 'nullable|integer|exists:role,id',
+            'status' => 'nullable|in:Aktif,Non-Aktif'
         ]);
 
         $user = User::create([
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role_id' => $request->role_id
+            'role_id' => $request->role_id,
+            'status' => $request->status ?? 'Aktif'
         ]);
+
+        UsersChanged::dispatch('created', $user->id);
 
         return response()->json([
             'status' => 'success',
@@ -49,7 +54,8 @@ class UserController extends Controller
             'username' => 'sometimes|string|unique:users,username,'.$id,
             'email' => 'sometimes|email|unique:users,email,'.$id,
             'password' => ['sometimes', 'string', Password::min(8)->mixedCase()->numbers()],
-            'role_id' => 'nullable|integer|exists:role,id'
+            'role_id' => 'nullable|integer|exists:role,id',
+            'status' => 'sometimes|in:Aktif,Non-Aktif'
         ]);
 
         if ($request->has('username')) {
@@ -68,7 +74,13 @@ class UserController extends Controller
             $user->role_id = $request->role_id;
         }
 
+        if ($request->has('status')) {
+            $user->status = $request->status;
+        }
+
         $user->save();
+
+        UsersChanged::dispatch('updated', $user->id);
 
         return response()->json([
             'status' => 'success',
@@ -77,10 +89,27 @@ class UserController extends Controller
         ]);
     }
 
+    public function deactivate($id)
+    {
+        $user = User::findOrFail($id);
+        $user->status = 'Non-Aktif';
+        $user->save();
+
+        UsersChanged::dispatch('deactivated', $user->id);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'User deactivated successfully',
+            'data' => $user
+        ]);
+    }
+
     public function destroy($id)
     {
         $user = User::findOrFail($id);
         $user->delete();
+
+        UsersChanged::dispatch('deleted', (int) $id);
 
         return response()->json([
             'status' => 'success',

@@ -25,6 +25,7 @@ Route::middleware('auth:api')->group(function () { // Pakai auth:api jika JWT, a
     Route::middleware('role:master_admin')->group(function () {
         Route::get('/users', [UserController::class, 'index']);
         Route::post('/users', [UserController::class, 'store']);
+        Route::patch('/users/{id}/deactivate', [UserController::class, 'deactivate']);
         Route::put('/users/{id}', [UserController::class, 'update']);
         Route::delete('/users/{id}', [UserController::class, 'destroy']);
     });
