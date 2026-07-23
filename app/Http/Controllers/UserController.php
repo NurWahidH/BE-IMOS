@@ -12,7 +12,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::with('role')->get();
+        $users = User::with(['role', 'unit'])->get();
         return response()->json([
             'status' => 'success',
             'data' => $users
@@ -26,6 +26,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users',
             'password' => ['required', 'string', Password::min(8)->mixedCase()->numbers()],
             'role_id' => 'nullable|integer|exists:role,id',
+            'unit_id' => 'nullable|integer|exists:unit,id',
             'status' => 'nullable|in:Aktif,Non-Aktif'
         ]);
 
@@ -34,6 +35,7 @@ class UserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role_id' => $request->role_id,
+            'unit_id' => (int) $request->role_id === 3 ? $request->unit_id : null,
             'status' => $request->status ?? 'Aktif'
         ]);
 
@@ -55,6 +57,7 @@ class UserController extends Controller
             'email' => 'sometimes|email|unique:users,email,'.$id,
             'password' => ['sometimes', 'string', Password::min(8)->mixedCase()->numbers()],
             'role_id' => 'nullable|integer|exists:role,id',
+            'unit_id' => 'nullable|integer|exists:unit,id',
             'status' => 'sometimes|in:Aktif,Non-Aktif'
         ]);
 
@@ -72,6 +75,13 @@ class UserController extends Controller
 
         if ($request->has('role_id')) {
             $user->role_id = $request->role_id;
+            if ((int) $request->role_id !== 3) {
+                $user->unit_id = null;
+            }
+        }
+
+        if ($request->has('unit_id')) {
+            $user->unit_id = (int) ($request->role_id ?? $user->role_id) === 3 ? $request->unit_id : null;
         }
 
         if ($request->has('status')) {

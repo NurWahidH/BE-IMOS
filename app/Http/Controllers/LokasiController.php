@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Lokasi;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 
 class LokasiController extends Controller
 {
     public function index ()
     {
-        $dataLokasi = Lokasi::all();
+        $dataUnit = Unit::all();
 
         return response()->json([
             'status' => 'success',
-            'data' => $dataLokasi
+            'data' => $dataUnit
         ]);
     }
     
@@ -21,15 +21,14 @@ class LokasiController extends Controller
     {
         $request->validate([
             'unit' => 'required|string',
-            'nama_ruangan' => 'required|string',
         ]);
         
-        $lokasiBaru = Lokasi::create($request->all());
+        $unitBaru = Unit::create($request->only('unit'));
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Data lokasi berhasil ditambahkan',
-            'data' => $lokasiBaru
+            'message' => 'Data unit berhasil ditambahkan',
+            'data' => $unitBaru
         ], 201);
     }
 }

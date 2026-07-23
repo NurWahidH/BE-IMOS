@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AssetController;
+use App\Http\Controllers\LokasiController;
 
 // ----------------------------------------------------
 // 1. Rute Publik (Bisa diakses tanpa login)
@@ -20,6 +21,7 @@ Route::middleware('auth:api')->group(function () { // Pakai auth:api jika JWT, a
 
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
+    Route::get('/units', [LokasiController::class, 'index']);
 
     // --- GRUP MASTER ADMIN ---
     Route::middleware('role:master_admin')->group(function () {

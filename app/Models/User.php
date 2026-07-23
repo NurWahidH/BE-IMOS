@@ -26,7 +26,7 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['username', 'email', 'password', 'role_id', 'status'])]
+#[Fillable(['username', 'email', 'password', 'role_id', 'unit_id', 'status'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser, JWTSubject
 {
@@ -35,6 +35,7 @@ class User extends Authenticatable implements PasskeyUser, JWTSubject
         'email',
         'password',
         'role_id',
+        'unit_id',
         'status',
     ];
 
@@ -47,6 +48,11 @@ class User extends Authenticatable implements PasskeyUser, JWTSubject
     public function role(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    public function unit(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Unit::class, 'unit_id');
     }
 
     /**
