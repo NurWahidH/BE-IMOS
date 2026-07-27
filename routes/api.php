@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AssetController;
+use App\Http\Controllers\LogUserController;
+use App\Http\Controllers\LokasiController;
 
 // ----------------------------------------------------
 // 1. Rute Publik (Bisa diakses tanpa login)
@@ -20,6 +22,7 @@ Route::middleware('auth:api')->group(function () { // Pakai auth:api jika JWT, a
 
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/profile', [AuthController::class, 'profile']);
+    Route::get('/units', [LokasiController::class, 'index']);
 
     // --- GRUP MASTER ADMIN ---
     Route::middleware('role:master_admin')->group(function () {
@@ -28,6 +31,10 @@ Route::middleware('auth:api')->group(function () { // Pakai auth:api jika JWT, a
         Route::patch('/users/{id}/deactivate', [UserController::class, 'deactivate']);
         Route::put('/users/{id}', [UserController::class, 'update']);
         Route::delete('/users/{id}', [UserController::class, 'destroy']);
+        Route::get('/activity-logs', [LogUserController::class, 'index']);
+        Route::get('/password-requests', [UserController::class, 'passwordRequests']);
+        Route::delete('/password-requests/{id}', [UserController::class, 'rejectPasswordRequest']);
+        Route::post('/password-requests/{id}/approve', [UserController::class, 'approvePasswordRequest']);
     });
 
     // --- GRUP ADMIN ---

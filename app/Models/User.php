@@ -14,6 +14,7 @@ use Laravel\Fortify\Contracts\PasskeyUser;
 use Laravel\Fortify\PasskeyAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use App\Traits\LogsActivity;
 /**
  * @property int $id
  * @property string $username
@@ -39,7 +40,7 @@ class User extends Authenticatable implements PasskeyUser, JWTSubject
     ];
 
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable;
+    use HasFactory, Notifiable, PasskeyAuthenticatable, TwoFactorAuthenticatable, LogsActivity;
 
     /**
      * Get the role associated with the user.
@@ -47,6 +48,14 @@ class User extends Authenticatable implements PasskeyUser, JWTSubject
     public function role(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Role::class, 'role_id');
+    }
+
+    /**
+     * Get the activity logs for the user.
+     */
+    public function logs(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(LogUser::class, 'idUser');
     }
 
     /**

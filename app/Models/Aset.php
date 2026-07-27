@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Traits\LogsActivity;
 
 class Aset extends Model
 {
+    use LogsActivity;
+
     protected $table = 'aset';
 
     protected $fillable = [

@@ -1509,12 +1509,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "7d66044819e269f05924793a6800022dc181d850"
+                "reference": "7d66044819e269f05924793a6https://localhost:https://localhost:8000/22dc181d850"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/7d66044819e269f05924793a6800022dc181d850",
-                "reference": "7d66044819e269f05924793a6800022dc181d850",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/7d66044819e269f05924793a6https://localhost:https://localhost:8000/22dc181d850",
+                "reference": "7d66044819e269f05924793a6https://localhost:https://localhost:8000/22dc181d850",
                 "shasum": ""
             },
             "require": {
